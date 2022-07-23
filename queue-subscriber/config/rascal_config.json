@@ -1,0 +1,24 @@
+{
+    "$schema": "./../node_modules/rascal/lib/config/schema.json",
+    "vhosts": {
+        "/": {
+            "connection": {
+                "url": "amqp://rabbitmq:5672",
+                "options": {
+                    "heartbeat": 10
+                }
+            },
+            "exchanges": [
+                ""
+            ],
+            "queues": [
+                "email"
+            ],
+            "subscriptions": {
+                "email": {
+                    "queue": "email"
+                }
+            }
+        }
+    }
+}

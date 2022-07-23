@@ -1,0 +1,37 @@
+version: "0.1"
+services:
+  publisher:
+    build: ./queue-publisher/
+    ports:
+      - 3000:3000
+    environment:
+      - QUEUE_TYPE=rabbitmq
+    networks:
+      - internal_network
+  
+  rabbitmq:
+    image: rabbitmq:3.10.6
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+    networks:
+      - internal_network
+  
+  email-subscriber:
+    build: ./queue-subscriber/
+    environment:
+      - ROLE_TYPE=email
+      - QUEUE_TYPE=rabbitmq
+    networks:
+      - internal_network
+
+  mongodb:
+    image: mongo:4.4
+    ports: 
+      - 27017:27017
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    driver: bridge
