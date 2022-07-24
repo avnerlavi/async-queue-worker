@@ -67,7 +67,7 @@ This role type reads messages published to the 'email' queue and inserts them to
 
 # Setup
 
-The project contains a `docker-compose.yml` file which describes a default setup of the application. To set the application up according to the file, on a machine with Docker-Compose configured, run `docker compose up -d`.
+The project contains a `docker-compose.yml` file which describes a default setup of the application. To set the application up according to the file, on a machine with Docker-Compose configured, run `docker-compose build`, followed by `docker-compose up -d`.
 
 The application becomes fully available after a few seconds as the database and queue take a while to become available- please be patient. :)
 

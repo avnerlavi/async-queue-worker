@@ -14,6 +14,5 @@ COPY package*.json ./
 RUN npm install
 COPY --from=builder /home/app/dist ./dist
 COPY --from=builder /home/app/config ./config
-COPY .env .
 
 CMD ["node", "dist/app.js"]
