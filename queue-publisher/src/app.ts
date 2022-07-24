@@ -7,25 +7,33 @@ import { Publisher } from './publishers/publisher';
 
 require('dotenv').config({ path: __dirname + '/../.env' });
 
-const app = express();
-app.set('port', process.env.PORT || 3000);
+async function startWebServer(): Promise<void> {
+    try {
+        const queueType = process.env.QUEUE_TYPE;
+        if (!queueType) throw new Error('queue type not provided as environment variable!');
+        const publisher: Publisher = await PublisherFactory.createPublisher(queueType);
+        console.log(`created publisher for queue of type ${queueType}.`);
+        const publisherController = new PublisherController(publisher);
+        configureWebServer(publisherController);
+    } catch (err: any) {
+        console.error(err);
+        process.exit(1);
+    };
+}
 
-const crossOrigin = cors();
-app.use(crossOrigin);
+startWebServer();
 
-const queueType = process.env.QUEUE_TYPE;
-if (!queueType) throw new Error('queue type not provided as environment variable!');
-PublisherFactory.createPublisher(queueType).then((publisher: Publisher) => {
-    console.log(`created publisher for queue of type ${queueType}.`);
-    const publisherController = new PublisherController(publisher);
+function configureWebServer(publisherController: PublisherController) {
+    const app = express();
+    app.set('port', 3000);
+
+    const crossOrigin = cors();
+    app.use(crossOrigin);
 
     app.get('/favicon.ico', (req, res) => res.status(204));
     app.get('/:queueName', (req, res) => { publisherController.publish(req, res); });
 
-    app.listen(app.get('port'), () => {
-        console.log(`app listening on port ${app.get("port")}.`);
+    app.listen(3000, () => {
+        console.log(`app listening on port 3000.`);
     });
-}).catch((err: any) => {
-    console.error(err);
-    process.exit(1);
-});
+}

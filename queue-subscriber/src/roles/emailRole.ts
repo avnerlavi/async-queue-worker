@@ -6,11 +6,13 @@ import { Role } from "./role";
 export class EmailRole implements Role {
     public readonly name = 'email';
     private readonly client: MongoClient;
+    private readonly databaseName: string;
     private readonly collectionName: string;
 
     constructor(client: MongoClient) {
         this.client = client;
         this.collectionName = this.name;
+        this.databaseName = `${this.name}-database`;
     }
 
     public static async create(): Promise<EmailRole> {
@@ -37,7 +39,7 @@ export class EmailRole implements Role {
     public async execute(message: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.client.db(process.env.MONGODB_DB_NAME)
+                await this.client.db(this.databaseName)
                     .collection(this.collectionName).insertOne({ message });
 
                 console.log('message inserted.');

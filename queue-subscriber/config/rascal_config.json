@@ -3,7 +3,7 @@
     "vhosts": {
         "/": {
             "connection": {
-                "url": "amqp://rabbitmq:5672",
+                "url": "amqp://localhost:5672",
                 "options": {
                     "heartbeat": 10
                 }

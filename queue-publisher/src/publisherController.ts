@@ -17,19 +17,22 @@ export class PublisherController {
     public async publish(req: Request, res: Response): Promise<void> {
         try {
             if (!this.publisher) throw new Error('connection to queue not yet established');
-            const { message, queue }: MessageParameters = this.extractMessageParameters(req);
+            const { message, queue }: MessageParameters = PublisherController.extractMessageParameters(req);
             this.publisher.publish(message, queue).then(() => {
                 res.send('message sent!');
             }).catch((err: any) => {
                 console.error(err);
-                res.status(500).send(err.message);
+                res.status(500);
+                res.send(err.message);
             });
         } catch (err: any) {
-            res.status(500).send(err.message);
+            console.error(err);
+            res.status(500);
+            res.send(err.message);
         }
     };
 
-    private extractMessageParameters(req: Request): MessageParameters {
+    private static extractMessageParameters(req: Request): MessageParameters {
         const message: string = req.query.message as string;
         if (!message) throw new Error('message cannot be empty!');
         const queue: string = req.params.queueName;

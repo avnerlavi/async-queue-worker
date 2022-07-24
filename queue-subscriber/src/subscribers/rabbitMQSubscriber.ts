@@ -18,14 +18,15 @@ export class RabbitMQSubscriber implements Subscriber {
 
     public static async create(role: Role): Promise<RabbitMQSubscriber> {
         const config: rascal.BrokerConfig = require('../../config/rascal_config.json');
+        config.vhosts!['/'].connection!.url = process.env.RABBITMQ_QUEUE_URL || config.vhosts!['/'].connection?.url; // this replaces the default queue url (e.g., for production use)
         let retryCount: number = 0;
         const RETRY_LIMIT_COUNT = 10;
         const RECONNECT_DELAY_SECONDS = 5;
         while (retryCount < RETRY_LIMIT_COUNT) {
             try {
                 const broker = await rascal.BrokerAsPromised.create(config);
-                broker.on('error', (err, { vhost, connectionUrl }) => {
-                    console.error('broker error', err, vhost, connectionUrl);
+                broker.on('error', (err: any) => {
+                    console.error('broker error', err);
                 });
 
                 console.log('broker created.');
